@@ -18,7 +18,7 @@
 
   <style>
     html {
-      background:#018DED url(http://unsplash.it/1500/1000?image=881&blur=50);
+      background:#018DED url(http://unsplash.it/500);
       background-size:cover;
       font-family:'helvetica neue';
       text-align: center;
@@ -41,11 +41,16 @@
       margin:50px auto;
       position: relative;
       padding:2rem;
+      opacity:0;
+      animation: fadeIn 2s ease-in-out;
+      animation-fill-mode: forwards;
+      transition: opacity 1s linear;
       box-shadow:
         0 0 0px 4px rgba(0,0,0,0.1),
         inset 0 0 0 3px #EFEFEF,
         inset 0 0 10px black,
         0 0 10px rgba(0,0,0,0.2);
+      transform: rotate(90deg);
     }
 
     .clock-face {
@@ -59,14 +64,40 @@
       width:50%;
       height:6px;
       background:black;
+      opacity: 0.75;
       position: absolute;
       top:50%;
+      transform-origin: right;
     }
 
+    @keyframes fadeIn {
+      0% {opacity:0;}
+      100% {opacity:1;}
+    }
   </style>
 
   <script>
+    let secondsHand = document.querySelector('.second-hand'),
+        minsHand = document.querySelector('.min-hand'),
+        hoursHand = document.querySelector('.hour-hand');
 
+    function updateTime() {
+      let now     = new Date(),
+          seconds = now.getSeconds(),
+          minutes = now.getMinutes(),
+          hour    = now.getHours();
+
+      var secondsDegrees = (seconds / 60) * 360
+      secondsHand.style.transform = `rotate(${secondsDegrees}deg)`
+
+      var minutesDegrees = (minutes / 60) * 360
+      minsHand.style.transform = `rotate(${minutesDegrees}deg)`
+
+      var hoursDegrees = (hour / 24) * 360
+      hoursHand.style.transform = `rotate(${hoursDegrees}deg)`
+    }
+
+    setInterval(updateTime, 1000);
 
   </script>
 </body>
