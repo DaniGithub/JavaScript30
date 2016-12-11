@@ -36,6 +36,10 @@
       text-decoration: line-through;
     }
 
+    input:checked + p.hl {
+      background: rgba(255, 198, 0, 0.25);
+    }
+
     input[type="checkbox"] {
       margin:20px;
     }
@@ -101,9 +105,62 @@
       <input type="checkbox">
       <p>Don't forget to tweet your result!</p>
     </div>
+    <a class="uncheckAll" href="#/">Uncheck All</a>
   </div>
 
 <script>
+  const checkBoxes = document.querySelectorAll('input[type="checkbox"]');
+  const uncheckAll = document.querySelector('.uncheckAll');
+  var toCheck = []
+  var first = null, last = null;
+
+  function checkHandler(first, last) {
+    // If first > last, then reverse the first and last variables so that the for loop still works
+    // otherwise i would have had to write a for loop that loops backwards
+    if(first >= last) {
+      var tmp = first;
+      first = last;
+      last = tmp;
+    }
+    // Check all that are between first and last index
+    for(var i = first; i <= last; i++) {
+      checkBoxes[i].checked = true;
+      checkBoxes[i].nextElementSibling.classList.add('hl')
+      // To uncheck all that are not checked
+      for(var j = 0; j < checkBoxes.length; j++) {
+        if(j >= first && j <= last) {
+          continue;
+        }
+        checkBoxes[j].checked = false;
+      }
+    }
+    setTimeout(()=>{
+      checkBoxes.forEach((checkbox)=>{
+        if(checkbox.nextElementSibling.classList.contains('hl')) {
+          checkbox.nextElementSibling.classList.remove('hl')
+        }
+      })
+    },2000)
+  }
+
+  checkBoxes.forEach((checkbox, i, a) => {
+    checkbox.addEventListener('change', (e)=>{
+      first === null ? first = i : last = i;
+      if (typeof first === 'number' && typeof last === 'number') {
+        checkbox.addEventListener('keyup', (e)=> {
+          if(e.which === 16) {
+            checkHandler(first, last);
+            first = null;
+            last = null;
+          }
+        })
+      }
+    })
+  });
+
+  uncheckAll.addEventListener('click', ()=>{
+    checkBoxes.forEach(checkbox => checkbox.checked = false);
+  })
 </script>
 </body>
 </html>
